@@ -1,19 +1,22 @@
 <script lang="ts">
-	import Gun from 'gun';
-	const gun = Gun();
+    import {gun} from '../lib/gun';
 
-	const sharedTextNode = gun.get('text');
+    const sharedTextNode = gun.get('text');
 
-	let textValue = '';
+    let textValue = "";
 
-	sharedTextNode.on((data) => {
-		console.log('new data', data);
-		textValue = data.text;
-	});
+    sharedTextNode.get("message").on(data => {
+        console.log('new data', data);
+        if (data.text !== textValue) {
+            textValue = data.text;
+        }
+    });
 
-	$: if (textValue) {
-		sharedTextNode.put({ text: textValue });
-	}
+
+    $: if (textValue) {
+				console.log("CHANGED", textValue)
+        sharedTextNode.get('message').put({ text: textValue });
+    }
 </script>
 
 <h1>Welcome to SvelteKit</h1>
