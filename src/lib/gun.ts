@@ -1,8 +1,8 @@
-import GUN from 'gun';
+import GUN, { type IGunInstance } from 'gun';
 import 'gun/sea';
 import { browser } from '$app/environment';
-console.log('browser', browser, browser ? window.location.host : 'nohost');
 
-export const gun = browser
+export const gun: IGunInstance = browser
 	? new GUN({ peers: [`http://${window.location.host}/gun`] })
-	: global.gun;
+	: //@ts-expect-error VSCode fails to get types
+		global.gun;
