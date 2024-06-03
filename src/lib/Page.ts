@@ -1,5 +1,4 @@
 import type { Node } from './Node/node';
-import type { NodeType } from './Node/nodeType';
 import { generateKey } from './generateKey';
 import { gun } from './gun';
 
@@ -12,6 +11,23 @@ export class Page {
 
 	setPath(path: string) {
 		this.path = path;
+	}
+
+	async getNode(key: string): Promise<Node> {
+		return new Promise((resolve) => {
+			gun.get(this.path).get(key).once(resolve);
+		});
+	}
+
+	async updateNode(key: string, value: Partial<Node>) {
+		const node = await this.getNode(key);
+		const updated: Node = {
+			key: node.key,
+			type: node.type,
+			value: value?.value ?? ''
+		};
+
+		gun.get(this.path).get(key).put(updated);
 	}
 
 	async getNodes(): Promise<Node[]> {
@@ -30,6 +46,10 @@ export class Page {
 					resolve(nodes);
 				});
 		});
+	}
+
+	trackNode(key: string, callback: (node: Node) => void) {
+		gun.get(this.path).get(key).on(callback);
 	}
 
 	subscribeToNodes(callback: (nodes: Node[]) => void) {
@@ -56,15 +76,13 @@ export class Page {
 			});
 	}
 
-	addNode(type: NodeType) {
+	addNode(node: Partial<Omit<Node, 'key'>>) {
 		const key = generateKey();
-		const emptyNode: Node = {
-			type,
-			key,
-			value: ''
-		};
 
-		gun.get(this.path).get(key).put(emptyNode);
+		gun
+			.get(this.path)
+			.get(key)
+			.put({ ...node, key });
 
 		return key;
 	}
