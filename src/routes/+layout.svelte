@@ -5,11 +5,11 @@
 	import { User } from '$lib/user';
 	import { onMount } from 'svelte';
 
-  onMount(() => {
-    if(!$page.url.pathname.includes('auth') && !User.getInstance().authorized) {
-      goto('/auth/login')
-    }
-  })
+  // onMount(() => {
+  //   if(!$page.url.pathname.includes('auth') && !User.getInstance().authorized) {
+  //     goto('/auth/login')
+  //   }
+  // })
       
 </script>
 
@@ -20,6 +20,7 @@
     </div>
   </nav>
   <main class="container mx-auto p-4">
+    <slot></slot>
   </main>
 </div>
 <!-- 
