@@ -46,6 +46,14 @@ async function createServer() {
 
 	var gun = Gun({ file: 'data', web: server });
 
+	gun.user().create('root', 'tooramognus1488', (ack) => {
+		if ('ok' in ack) {
+			console.log('root user set up!');
+		} else {
+			console.log('failed to create root user');
+		}
+	});
+
 	global.Gun = Gun;
 	global.gun = gun;
 }
