@@ -1,20 +1,33 @@
 <script lang="ts">
-    import { gun } from '../lib/gun';
 
-    const sharedTextNode = gun.get('text');
+    import { Page } from '$lib/Page';
+    import { type Node } from '$lib/Node/node';
+	import Edit from '../components/Node/Text/Edit.svelte';
+    
+    const path = 'page1'
+    
+    const page = new Page(path);
 
-    let textValue = "";
+    let nodes: Node[] = [];
 
-    sharedTextNode.get("message").on(data => {
-        if (data.text !== textValue) {
-            textValue = data.text;
-        }
+    page.subscribeToNodes((newNodes) => {
+        nodes = newNodes;
     });
 
+    $: console.log({nodes});
 
-    $: if (textValue) {
-        sharedTextNode.get('message').put({ text: textValue });
+    const addNode = () => {
+        page.addNode({type: 'text', value: 'New text node'});
     }
 </script>
 
-<textarea bind:value={textValue}></textarea>
+
+<div class="p-4 shadow rounded">
+    <button class="btn btn-primary" on:click={addNode}>Add node</button>
+    <div class="flex flex-col gap-2">
+
+        {#each nodes as node}
+        <Edit key={node.key} path={path}/>
+        {/each}
+    </div>
+</div>
