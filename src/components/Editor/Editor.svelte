@@ -1,28 +1,31 @@
 <script lang="ts">
-	import { Page } from '$lib/Page';
-  import { type Node } from '$lib/Node/node';
-  
-  const page = new Page('test');
+	import { NodeType } from '../../lib/Node/nodeType';
 
-  let nodes: Node[] = [];
+	const glob = import.meta.glob<true, string, { default: ConstructorOfATypedSvelteComponent }>(
+		'../Node/**/Edit.svelte',
+		{ eager: true }
+	);
 
-  page.subscribeToNodes((newNodes) => {
-    console.group("New nodes")
-    newNodes.forEach((n) => console.log(n))
-    console.groupEnd()
+	const nodeTypes = Object.keys(NodeType);
 
-    nodes = newNodes;
-  });
+	const nodeTypeToEditComponent = nodeTypes.reduce(
+		(acc, nodeType) => {
+			const editComponent = Object.entries(glob).find(([key, value]) =>
+				key.toLowerCase().includes(nodeType.toLowerCase())
+			)?.[1]?.default;
+
+			if (editComponent) {
+				acc[nodeType] = editComponent;
+			}
+
+			return acc;
+		},
+		{} as Record<string, ConstructorOfATypedSvelteComponent>
+	);
 </script>
 
 <div>
-  <button on:click={() => page.addNode('button')}>Add node</button>
-
-  {#each nodes as node}
-    <div class="bg-gray-200 p-4">
-      <button on:click={() => page.removeNode(node.key)}>Remove node</button>
-      <div>{node.key}</div>
-    </div>
- 
-  {/each}
+	{#each Object.entries(nodeTypeToEditComponent) as [nodeType, EditComponent]}
+		<EditComponent key={nodeType} path="vitest" />
+	{/each}
 </div>
