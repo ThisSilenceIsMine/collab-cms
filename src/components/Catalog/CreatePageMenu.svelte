@@ -13,7 +13,7 @@
 </script>
 
 <details class="dropdown">
-	<summary class="m-1 btn">Create new page</summary>
+	<summary class="m-1 btn btn-primary">Create new page</summary>
 
 	<div class="card card-bordered">
 		<div class="card-body flex-row">
