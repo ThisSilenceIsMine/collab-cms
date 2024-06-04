@@ -1,5 +1,6 @@
 import GUN, { type IGunInstance } from 'gun';
 import 'gun/sea';
+import 'gun/lib/then';
 import { browser } from '$app/environment';
 
 export const gun: IGunInstance = browser
