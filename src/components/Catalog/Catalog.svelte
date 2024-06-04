@@ -3,10 +3,10 @@
 	import CreatePageMenu from './CreatePageMenu.svelte';
 </script>
 
-<div class="flex flex-col gap-4">
-	<span>Available pages:</span>
+<div class="flex flex-col gap-4 bg-primary-content h-full p-6">
+	<span class="text-xl text-primary">Available pages:</span>
 	{#each $catalogStore as page (page)}
-		<a href={`editor/${page}`} class="btn btn-link max-w-44">{page}</a>
+		<a href={`editor/${page}`} class="btn btn-ghost max-w-44">{page}</a>
 	{/each}
 	<CreatePageMenu on:createPage={(e) => catalogStore.createPage(e.detail.title)} />
 </div>
