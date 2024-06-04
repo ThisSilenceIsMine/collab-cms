@@ -5,14 +5,13 @@
 	import { getTypeEdit } from '../Node/typeRenderers';
 	import CreateNodeMenu from './CreateNodeMenu.svelte';
 
-	const path = 'editorPageTest';
+	export const path: string = 'editorPageTest';
 
 	const page = new Page('editorPageTest');
 
 	let currentNodes: Node[] = [];
 
 	page.subscribeToNodes((nodes) => {
-		console.log('NODES CHANGE', { nodes });
 		currentNodes = nodes;
 	});
 
