@@ -24,6 +24,7 @@ export class Page {
 		const updated: Node = {
 			key: node.key,
 			type: node.type,
+			order: node.order,
 			value: value?.value ?? ''
 		};
 
@@ -31,8 +32,12 @@ export class Page {
 	}
 
 	async getNodes(): Promise<Node[]> {
-		return new Promise((resolve) => {
-			const nodes: Node[] = [];
+		const nodes: Node[] = [];
+
+		await new Promise<void>((resolve) => {
+			const timeout = setTimeout(() => {
+				resolve();
+			}, 500); // Set an appropriate timeout duration
 
 			gun
 				.get(this.path)
@@ -43,9 +48,13 @@ export class Page {
 					nodes.push(node);
 				})
 				.once(() => {
-					resolve(nodes);
+					clearTimeout(timeout);
+					resolve();
 				});
 		});
+
+		nodes.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+		return nodes;
 	}
 
 	trackNode(key: string, callback: (node: Node) => void) {
@@ -59,35 +68,56 @@ export class Page {
 			.get(this.path)
 			.map()
 			.on((node, key) => {
-				//handle node deletion
+				// Handle node deletion
 				if (node === null) {
 					const idx = nodes.findIndex((n) => n.key === key);
 					if (idx !== -1) nodes.splice(idx, 1);
-					callback(nodes);
-
+					callback([...nodes].sort((a, b) => (a.order ?? 0) - (b.order ?? 0)));
 					return;
 				}
 
-				//validate node
-				if (!node || typeof node !== 'object' || nodes.find((n) => n.key === key)) return;
+				// Validate and update node
+				const existingIndex = nodes.findIndex((n) => n.key === key);
+				if (existingIndex !== -1) {
+					nodes[existingIndex] = node;
+				} else {
+					nodes.push(node);
+				}
 
-				nodes.push(node);
-				callback(nodes);
+				callback([...nodes].sort((a, b) => (a.order ?? 0) - (b.order ?? 0)));
 			});
 	}
 
-	addNode(node: Partial<Omit<Node, 'key'>>) {
+	async addNode(node: Partial<Omit<Node, 'key' | 'order'>>) {
+		console.log('Adding node', node);
 		const key = generateKey();
+
+		const nodes = await this.getNodes();
+
+		console.log({ nodes });
+		const order = nodes.length;
+
+		console.log('Adding node', { ...node, key, order });
 
 		gun
 			.get(this.path)
 			.get(key)
-			.put({ ...node, key });
+			.put({ ...node, key, order });
 
 		return key;
 	}
 
-	removeNode(key: string) {
+	async removeNode(key: string) {
 		gun.get(this.path).get(key).put(null);
+
+		const nodes = await this.getNodes();
+		const updatedNodes = nodes.filter((node) => node.key !== key);
+
+		// Recalculate the order field for each remaining node
+		for (let i = 0; i < updatedNodes.length; i++) {
+			updatedNodes[i].order = i;
+
+			gun.get(this.path).get(updatedNodes[i].key).put(updatedNodes[i]);
+		}
 	}
 }
