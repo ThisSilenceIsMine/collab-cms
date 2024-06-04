@@ -7,7 +7,7 @@
 	const dispatch = createEventDispatcher();
 
 	function createNode(type: string) {
-		dispatch('createNode', { type });
+		dispatch('createNode', { value: type });
 	}
 </script>
 
