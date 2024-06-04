@@ -1,4 +1,5 @@
 import type { Node } from './Node/node';
+import { WITH_CATALOG_PREFIX } from './constant';
 import { generateKey } from './generateKey';
 import { gun } from './gun';
 
@@ -6,11 +7,11 @@ export class Page {
 	path: string;
 
 	constructor(path: string) {
-		this.path = path;
+		this.path = WITH_CATALOG_PREFIX(path);
 	}
 
 	setPath(path: string) {
-		this.path = path;
+		this.path = WITH_CATALOG_PREFIX(path);
 	}
 
 	async getNode(key: string): Promise<Node> {
