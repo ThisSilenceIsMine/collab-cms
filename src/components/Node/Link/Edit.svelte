@@ -1,34 +1,34 @@
 <script lang="ts">
-  import { Page } from '$lib/Page';
-  import { type Node } from '$lib/Node/node';
+	import { Page } from '$lib/Page';
+	import { type Node } from '$lib/Node/node';
 	import type { FormEventHandler } from 'svelte/elements';
+	import { createTrackNodeStore } from '$lib/Node/createNodeStore';
+	import { onMount } from 'svelte';
 
-  export let path = '';
-  export let key = '';
+	export let path = '';
+	export let key = '';
 
-  const page = new Page(path);
+	const { self: store, debouncedSetContent } = createTrackNodeStore(path, key);
 
-  let self: Node | null = null;
-  
-  $: if(key) {
-    page.trackNode(key, (node) => {
-      self = node;
-    });
-  }
+	let self: Node | null = null;
 
-  const setContent = (value: string) => {
-    if (self) {
-      page.updateNode(self.key, {value})
-    }
-  };
+	onMount(() => {
+		const unsubscribe = store.subscribe((node) => {
+			self = node;
+		});
 
-  const onInput: FormEventHandler<HTMLInputElement> = (e) => {
-    setContent((e.target as HTMLInputElement).value);
-  };
+		return () => {
+			unsubscribe();
+		};
+	});
 
-  $: value = self?.value ?? '';
+	const onInput: FormEventHandler<HTMLInputElement> = (e) => {
+		debouncedSetContent((e.target as HTMLInputElement).value);
+	};
 
-  $: isValidUrl = value.match(/https?:\/\/.+/);
+	$: value = self?.value ?? '';
+
+	$: isValidUrl = value.match(/https?:\/\/.+/);
 </script>
 
-<input class="input input-bordered" class:input-error={!isValidUrl} value={value} on:input={onInput}/>
+<input class="input input-bordered" class:input-error={!isValidUrl} {value} on:input={onInput} />

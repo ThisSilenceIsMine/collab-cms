@@ -1,32 +1,31 @@
 <script lang="ts">
-  import { Page } from '$lib/Page';
-  import { type Node } from '$lib/Node/node';
+	import { createTrackNodeStore } from '$lib/Node/createNodeStore';
+	import { type Node } from '$lib/Node/node';
+	import { onMount } from 'svelte';
 	import type { FormEventHandler } from 'svelte/elements';
 
-  export let path = '';
-  export let key = '';
+	export let path = '';
+	export let key = '';
 
-  const page = new Page(path);
+	const { self: store, debouncedSetContent } = createTrackNodeStore(path, key);
 
-  let self: Node | null = null;
-  
-  $: if(key) {
-    page.trackNode(key, (node) => {
-      self = node;
-    });
-  }
+	let self: Node | null = null;
 
-  const setContent = (value: string) => {
-    if (self) {
-      page.updateNode(self.key, {value})
-    }
-  };
+	onMount(() => {
+		const unsubscribe = store.subscribe((node) => {
+			self = node;
+		});
 
-  const onInput: FormEventHandler<HTMLInputElement> = (e) => {
-    setContent((e.target as HTMLInputElement).value);
-  };
+		return () => {
+			unsubscribe();
+		};
+	});
 
-  $: value = self?.value ?? '';
+	const onInput: FormEventHandler<HTMLInputElement> = (e) => {
+		debouncedSetContent((e.target as HTMLInputElement).value);
+	};
+
+	$: value = self?.value;
 </script>
 
-<input class="input input-bordered" value={value} on:input={onInput}/>
+<input class="input input-bordered" {value} on:input={onInput} />
