@@ -63,6 +63,8 @@ export class User {
 				.then(() => {
 					localStorage.setItem(LS_USER_KEY, key);
 					this.key = key;
+					this.name = name;
+					this.color = color;
 					resolve();
 				});
 		});
