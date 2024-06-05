@@ -1,3 +1,9 @@
+<script lang="ts">
+	export let username: string = '';
+
+	console.log({ username });
+</script>
+
 <div class="navbar bg-base-100">
 	<div class="flex-none">
 		<label for="sidebar" class="btn btn-square btn-ghost">
@@ -18,5 +24,7 @@
 	<div class="flex-1">
 		<a class="btn btn-ghost text-xl" href="/">Collab CMS</a>
 	</div>
-	<div class="flex-none"></div>
+	<div>
+		<span>{username}</span>
+	</div>
 </div>
