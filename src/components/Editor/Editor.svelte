@@ -5,24 +5,24 @@
 	import { getTypeEdit } from '../Node/typeRenderers';
 	import CreateNodeMenu from './CreateNodeMenu.svelte';
 
-	export const path: string = 'editorPageTest';
+	export let path: string = '';
 
-	const page = new Page('editorPageTest');
+	const page = path ? new Page(path) : null;
 
 	let currentNodes: Node[] = [];
 
-	page.subscribeToNodes((nodes) => {
-		currentNodes = nodes;
-	});
+	$: if (page)
+		page.subscribeToNodes((nodes) => {
+			currentNodes = nodes;
+		});
 
 	const createNode = (type: string) => {
-		page.addNode({
-			type: type as NodeType,
-			value: ''
-		});
+		page &&
+			page.addNode({
+				type: type as NodeType,
+				value: ''
+			});
 	};
-
-	$: console.log({ nodes: currentNodes });
 </script>
 
 <div class="flex flex-col gap-4">
