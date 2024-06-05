@@ -9,7 +9,9 @@ class Catalog {
 	public getPages(): Promise<Path[]> {
 		return new Promise((resolve) => {
 			gun.get(CATALOG_PREFIX).once((data) => {
-				resolve(Object.keys(data));
+				if (data && typeof data === 'object' && !Array.isArray(data)) {
+					resolve(Object.keys(data).filter((x) => x !== '_'));
+				}
 			});
 		});
 	}
@@ -33,13 +35,13 @@ class Catalog {
 			.get(CATALOG_PREFIX)
 			.map()
 			.on((node, key) => {
-				if (node === null) {
+				if (node === null || pages.includes(key)) {
 					return;
 				}
 
 				pages.push(key);
 
-				callback(pages);
+				callback(pages.filter((x) => x !== '_'));
 			});
 	}
 
@@ -58,7 +60,6 @@ function createCatalogStore() {
 	});
 
 	catalog.subscribe((pages) => {
-		console.log('on pages', pages);
 		set(pages);
 	});
 
