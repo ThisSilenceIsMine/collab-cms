@@ -1,5 +1,27 @@
 <script lang="ts">
-	export let username: string = '';
+	import { onMount } from 'svelte';
+	import { userStore, User } from '../../lib/User/User';
+
+	let user: User | null = null;
+
+	const unsubscribe = userStore.subscribe((value) => {
+		user = value;
+	});
+
+	onMount(() => {
+		return () => {
+			console.log('unsubscribing');
+			unsubscribe();
+		};
+	});
+
+	let username: string = '';
+
+	$: {
+		if (user && user.name) {
+			username = user.name;
+		}
+	}
 
 	console.log({ username });
 </script>
