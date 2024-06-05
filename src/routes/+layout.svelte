@@ -4,21 +4,27 @@
 
 	import Sidebar from '../components/Catalog/Sidebar.svelte';
 	import Navbar from '../components/Layout/Navbar.svelte';
-	import { User } from '../lib/User/User';
+	import { userStore, User } from '../lib/User/User';
 
-	onMount(async () => {
-		const user = new User();
+	let user: User | null = null;
 
-		await user.init();
-
-    console.log({ user });
-    console.log(user.name);
-
-    username = user.name ?? 'Guest';
+	const unsubscribe = userStore.subscribe((value) => {
+		user = value;
 	});
 
-	let username = '';
-	$: console.log({ username });
+	onMount(() => {
+		return () => {
+			unsubscribe();
+		};
+	});
+
+	let username: string = '';
+
+	$: {
+		if (user && user.name) {
+			username = user.name;
+		}
+	}
 </script>
 
 <div class="min-h-screen bg-base-200 text-base-content">
