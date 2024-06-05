@@ -31,8 +31,6 @@ export class User {
 			this.key = userKey;
 			await this.load();
 		}
-
-		console.log('this', this);
 	}
 
 	private async load() {
@@ -71,15 +69,19 @@ export class User {
 	}
 
 	public setCurrentPage(page: string | null) {
-		if (!this.key) return;
+		if (!this.key) return this;
 
 		gun.get('users').get(this.key).get('currentPage').put(page);
+
+		return this;
 	}
 
 	public setCurrentNode(nodeKey: string | null) {
-		if (!this.key) return;
+		if (!this.key) return this;
 
 		gun.get('users').get(this.key).get('currentElement').put(nodeKey);
+
+		return this;
 	}
 }
 
