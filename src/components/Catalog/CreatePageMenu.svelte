@@ -1,8 +1,6 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
 
-	export const path: string = 'createPageTest';
-
 	const dispatch = createEventDispatcher();
 
 	const createPage = (title: string) => {
