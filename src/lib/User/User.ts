@@ -6,6 +6,7 @@
  * 4. Track element user is currently interacting with
  */
 
+import { writable } from 'svelte/store';
 import { generateKey } from '../generateKey';
 import { gun } from '../gun';
 import { generateRandomColor } from '../util/generateRandomColor';
@@ -21,6 +22,8 @@ export class User {
 	constructor() {}
 
 	public async init() {
+		if (typeof window === 'undefined') return;
+
 		const userKey = localStorage.getItem(LS_USER_KEY);
 		if (!userKey) {
 			await this.create();
@@ -79,3 +82,15 @@ export class User {
 		gun.get('users').get(this.key).get('currentElement').put(nodeKey);
 	}
 }
+
+const userStore = writable<User>(new User());
+
+async function initUserStore() {
+	const user = new User();
+	await user.init();
+	userStore.set(user);
+}
+
+initUserStore();
+
+export { userStore };
