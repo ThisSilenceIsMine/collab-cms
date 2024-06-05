@@ -2,6 +2,7 @@
 	import type { Node } from '../../lib/Node/node';
 	import { NodeType } from '../../lib/Node/nodeType';
 	import { Page } from '../../lib/Page';
+	import { userStore } from '../../lib/User/User';
 	import { getTypeEdit } from '../Node/typeRenderers';
 	import CreateNodeMenu from './CreateNodeMenu.svelte';
 
@@ -23,11 +24,17 @@
 				value: ''
 			});
 	};
+
+	const selectNode = (key: string) => {
+		userStore.update((u) => u.setCurrentNode(key));
+	};
 </script>
 
 <div class="flex flex-col gap-4">
 	{#each currentNodes as node (node.key)}
-		<svelte:component this={getTypeEdit(node.type)} {path} key={node.key} />
+		<div on:focusin={() => selectNode(node.key)}>
+			<svelte:component this={getTypeEdit(node.type)} {path} key={node.key} />
+		</div>
 	{/each}
 
 	<CreateNodeMenu on:createNode={(e) => createNode(e.detail.value)} />
