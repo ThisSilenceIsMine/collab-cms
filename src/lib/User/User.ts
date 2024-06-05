@@ -1,10 +1,4 @@
-/**
- * TODO:
- * 1. Create pseudo-anonymous user on first visit, save to local storage
- * 2. Store user data in GUN
- * 3. Track page user is currently on
- * 4. Track element user is currently interacting with
- */
+import { browser } from '$app/environment';
 
 import { writable } from 'svelte/store';
 import { generateKey } from '../generateKey';
@@ -22,7 +16,7 @@ export class User {
 	constructor() {}
 
 	public async init() {
-		if (typeof window === 'undefined') return;
+		if (!browser) return;
 
 		const userKey = localStorage.getItem(LS_USER_KEY);
 		if (!userKey) {
@@ -42,6 +36,8 @@ export class User {
 				.get(key)
 				.map()
 				.once((data) => {
+					if (typeof data !== 'object') return;
+
 					this.color = data.color;
 					this.name = data.name;
 					resolve();
@@ -94,7 +90,6 @@ async function initUserStore() {
 	await user.init();
 	userStore.set(user);
 }
-
-initUserStore();
+if (browser) initUserStore();
 
 export { userStore };
