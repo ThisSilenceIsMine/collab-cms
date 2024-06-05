@@ -10,7 +10,7 @@
 
 <div class="flex flex-col gap-4 bg-base-200 h-full p-6">
 	<span class="text-xl text-base-content">Available pages:</span>
-	{#each $catalogStore as page (page)}
+	{#each $catalogStore as page}
 		<a on:click={() => onPageSelect(page)} href={`editor/${page}`} class="btn btn-ghost max-w-44"
 			>{page}</a
 		>
