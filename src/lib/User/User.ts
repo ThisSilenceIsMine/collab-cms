@@ -34,7 +34,6 @@ export class User {
 			gun
 				.get('users')
 				.get(key)
-				.map()
 				.once((data) => {
 					if (typeof data !== 'object') return;
 
@@ -54,7 +53,7 @@ export class User {
 			gun
 				.get('users')
 				.get(key)
-				.set({ key, name, color })
+				.put({ key, name, color })
 				.then()
 				.then(() => {
 					localStorage.setItem(LS_USER_KEY, key);
@@ -68,16 +67,14 @@ export class User {
 
 	public setCurrentPage(page: string | null) {
 		if (!this.key) return this;
-
-		gun.get('users').get(this.key).get('currentPage').put(page);
+		gun.get('users').get(this.key).put({ currentPage: page });
 
 		return this;
 	}
 
 	public setCurrentNode(nodeKey: string | null) {
 		if (!this.key) return this;
-
-		gun.get('users').get(this.key).get('currentElement').put(nodeKey);
+		gun.get('users').get(this.key).put({ currentElement: nodeKey });
 
 		return this;
 	}
