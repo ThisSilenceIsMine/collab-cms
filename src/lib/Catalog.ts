@@ -30,19 +30,18 @@ class Catalog {
 
 	public subscribe(callback: (pages: Path[]) => void) {
 		const pages: Path[] = [];
+		gun.get(CATALOG_PREFIX).on((node) => {
+			const routes = Object.keys(node).filter((x) => x !== '_');
 
-		gun
-			.get(CATALOG_PREFIX)
-			.map()
-			.on((node, key) => {
-				if (node === null || pages.includes(key)) {
+			routes.forEach((route) => {
+				if (route == null || pages.includes(route)) {
 					return;
 				}
 
-				pages.push(key);
-
-				callback(pages.filter((x) => x !== '_'));
+				pages.push(route);
 			});
+			callback(pages.filter((x) => x !== '_'));
+		});
 	}
 
 	public async deletePage(path: Path): Promise<void> {
@@ -54,10 +53,6 @@ const catalog = new Catalog();
 
 function createCatalogStore() {
 	const { subscribe, set } = writable<Path[]>([]);
-
-	catalog.getPages().then((pages) => {
-		set(pages);
-	});
 
 	catalog.subscribe((pages) => {
 		set(pages);
