@@ -56,6 +56,7 @@
 	}
 </script>
 
+<a href={`/blog/${path}`} class="btn btn-link"> View </a>
 <div class="flex flex-row justify-end gap-4 p-4">
 	{#each users as user}
 		<div class="badge">{user}</div>
