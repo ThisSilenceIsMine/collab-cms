@@ -38,10 +38,14 @@
 	});
 
 	let focusedNodes: [string, string][] = [];
+	let users: string[] = [];
+
 	$: {
 		const usersOnPage = Object.entries(userActivities).filter(
 			([id, activity]) => activity.currentPage === path
 		);
+
+		users = usersOnPage.map(([id, activity]) => activity.name);
 
 		const activeNodes = usersOnPage.map(([id, activity]) => [
 			activity.name,
@@ -52,6 +56,11 @@
 	}
 </script>
 
+<div class="flex flex-row justify-end gap-4 p-4">
+	{#each users as user}
+		<div class="badge">{user}</div>
+	{/each}
+</div>
 <div class="flex flex-col gap-4">
 	{#each currentNodes as node (node.key)}
 		<div class="flex flex-col gap-4 border-2 border-base-100 p-4 rounded-md">
