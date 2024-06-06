@@ -30,6 +30,5 @@
 </script>
 
 <div class="card">
-	<p class="card-title">{self?.key}</p>
 	<textarea class="textarea textarea-bordered" {value} on:input={onInput}></textarea>
 </div>
