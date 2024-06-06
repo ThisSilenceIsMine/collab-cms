@@ -4,6 +4,8 @@ import { gun } from '../gun';
 export type UserActivity = {
 	currentPage: string;
 	currentElement: string;
+	name: string;
+	color: string;
 };
 
 export type ActivityRecord = Record<string, UserActivity>;
