@@ -16,4 +16,4 @@
 	$: value = self?.value ?? '';
 </script>
 
-<p>{value}</p>
+<span class="text-xl">{value}</span>

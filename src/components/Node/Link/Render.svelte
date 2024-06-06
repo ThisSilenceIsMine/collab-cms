@@ -14,6 +14,8 @@
 	});
 
 	$: value = self?.value ?? '';
+
+	$: baseUrl = new URL(value).hostname;
 </script>
 
-<p>{value}</p>
+<a href={value} class="link">{baseUrl}</a>

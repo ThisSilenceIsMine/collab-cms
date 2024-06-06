@@ -1,6 +1,18 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import { userStore, User } from '../../lib/User/User';
+
+	import { onDestroy, onMount } from 'svelte';
+	import { userActivityStore, type ActivityRecord } from '../../lib/User/activityStore';
+
+	let userActivities: ActivityRecord = {};
+
+	const unsub = userActivityStore.subscribe((activity) => {
+		userActivities = activity ?? {};
+	});
+
+	onDestroy(() => {
+		unsub();
+	});
 
 	let user: User | null = null;
 
@@ -10,7 +22,6 @@
 
 	onMount(() => {
 		return () => {
-			console.log('unsubscribing');
 			unsubscribe();
 		};
 	});
@@ -22,10 +33,11 @@
 			username = user.name;
 		}
 	}
-
-	console.log({ username });
 </script>
 
+{#each Object.entries(userActivities) as [id, activity]}
+	<li>{id}: Active Page - {activity.currentPage}, Active Node - {activity.currentElement}</li>
+{/each}
 <div class="navbar bg-base-100">
 	<div class="flex-none">
 		<label for="sidebar" class="btn btn-square btn-ghost">
