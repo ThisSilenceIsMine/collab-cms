@@ -1,12 +1,12 @@
 import { writable } from 'svelte/store';
 import { gun } from '../gun';
 
-type UserActivity = {
-	activePage: string;
-	activeNode: string;
+export type UserActivity = {
+	currentPage: string;
+	currentElement: string;
 };
 
-type ActivityRecord = Record<string, UserActivity>;
+export type ActivityRecord = Record<string, UserActivity>;
 
 const createUserActivityStore = () => {
 	const { subscribe, set } = writable<ActivityRecord>({});
