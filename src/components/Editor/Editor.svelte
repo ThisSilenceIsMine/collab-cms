@@ -66,9 +66,11 @@
 	{#each currentNodes as node (node.key)}
 		<div class="flex flex-col gap-4 border-2 border-base-100 p-4 rounded-md">
 			{#if focusedNodes.find(([, key]) => key === node.key)}
-				{#each focusedNodes.filter(([, key]) => key === node.key) as [name, key] (key)}
-					<div class="badge badge-primary">{name}</div>
-				{/each}
+				<div class="flex gap-4">
+					{#each focusedNodes.filter(([, key]) => key === node.key) as [name, key] (name + key)}
+						<div class="badge badge-primary">{name}</div>
+					{/each}
+				</div>
 			{/if}
 			<div on:focusin={() => selectNode(node.key)}>
 				<svelte:component this={getTypeEdit(node.type)} {path} key={node.key} />

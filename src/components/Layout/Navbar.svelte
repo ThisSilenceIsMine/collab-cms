@@ -35,9 +35,6 @@
 	}
 </script>
 
-{#each Object.entries(userActivities) as [id, activity]}
-	<li>{id}: Active Page - {activity.currentPage}, Active Node - {activity.currentElement}</li>
-{/each}
 <div class="navbar bg-base-100">
 	<div class="flex-none">
 		<label for="sidebar" class="btn btn-square btn-ghost">
